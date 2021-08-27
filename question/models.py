@@ -10,4 +10,3 @@ class Quizzes(models.Model):
     questionID = models.ForeignKey(QnA, on_delete=models.CASCADE, related_name="question")
     quizID = models.IntegerField()
 
-
