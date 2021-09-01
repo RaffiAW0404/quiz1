@@ -1,0 +1,60 @@
+{% extends "question/layout.html" %}
+
+{% block body %}
+<h1>{{ quiz.QuizName }}</h1>
+
+
+<!-- <div class="form-check">
+    <input class="form-check-input" type="radio" name="{{ question.id }}" id="{{ question.id }}1" value="option1" checked>
+    <label class="form-check-label" for="{{ question.id }}1">
+      {{ question.qa }}
+    </label>
+</div>
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+    <label class="form-check-label" for="exampleRadios2">
+      Second default radio
+    </label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="option3">
+    <label class="form-check-label" for="exampleRadios3">
+        rhird radio
+    </label>
+  </div> -->
+
+  <h2>Questions</h2>
+  <div class="form-check">
+      {% for question in questions %} 
+          <li>{{ question.question }}</li>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="{{ question.id }}" id="{{ question.id }}1" value="option1">
+            <label class="form-check-label" for="{{ question.id }}1">
+              {{ question.qa }}
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="{{ question.id }}" id="{{ question.id }}2" value="option2">
+            <label class="form-check-label" for="{{ question.id }}2">
+              {{ question.qb }}
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="{{ question.id }}" id="{{ question.id }}3" value="option3">
+            <label class="form-check-label" for="{{ question.id }}3">
+              {{ question.qc }}
+            </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="{{ question.id }}" id="{{ question.id }}4" value="option4">
+          <label class="form-check-label" for="{{ question.id }}4">
+            {{ question.qd }}
+          </label>
+        </div>
+      {% empty %} 
+          <li>no questions</li>
+      {% endfor %}
+  </div>
+  
+
+{% endblock %}
