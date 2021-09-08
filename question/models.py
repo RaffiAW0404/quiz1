@@ -12,11 +12,11 @@ class Quiz(models.Model):
 class Question(models.Model):
     quiz = models.ManyToManyField(Quiz, blank=True, related_name="questions")
     question = models.CharField(max_length=200)
-    qa= models.CharField(max_length=200)
-    qb= models.CharField(max_length=200)
-    qc= models.CharField(max_length=200)
-    qd= models.CharField(max_length=200)
-    a = models.CharField(max_length=2)
+    q1= models.CharField(max_length=200)
+    q2= models.CharField(max_length=200)
+    q3= models.CharField(max_length=200)
+    q4= models.CharField(max_length=200)
+    a = models.CharField(max_length=1)
 
     def __str__(self):
         return f"{self.id}"

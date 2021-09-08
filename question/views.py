@@ -18,3 +18,39 @@ def qz(request, quiz_id):
         "questions": quiz.questions.all(),
         "non_questions": Question.objects.exclude(quiz=quiz).all()
     })
+
+def check(request, quiz_id):
+    if request.method == "POST":
+        print(quiz_id)
+        quiz = Quiz.objects.get(QuizId=quiz_id)
+        questions = quiz.questions.all()
+        answers=[]
+        num = 0
+        for i in questions:
+           answers.append(i.a)
+           num += 1
+
+        for j in range(num):
+            print(j)
+            print(answers)
+            answer = "option"+answers[int(j)]
+            print(answer)
+            print(request.POST["question"])
+            if request.POST["question"] == answer:
+                print("correct")
+            else:
+                print("incorrect")
+
+        # print(answers)
+        # answer = "option"+answers[0]
+        # print(answer)
+        # #for j in answers:
+            
+        #    # print(j)
+        # print(request.POST["question"])
+        # if request.POST["question"] == answer:
+        #     print("correct")
+        # else:
+        #     print("incorrect")
+        # option = Question.objects.get(id=int(request.POST["question"]))
+
