@@ -5,6 +5,7 @@ from django.db import models
 class Quiz(models.Model):
     QuizId = models.IntegerField()
     QuizName = models.CharField(max_length=50)
+    numq = models.IntegerField()
 
     def __str__(self):
         return f"{self.QuizId}({self.QuizName})"
@@ -17,6 +18,7 @@ class Question(models.Model):
     q3= models.CharField(max_length=200)
     q4= models.CharField(max_length=200)
     a = models.CharField(max_length=1)
+
 
     def __str__(self):
         return f"{self.id}"

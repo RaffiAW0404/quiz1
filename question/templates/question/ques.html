@@ -1,0 +1,41 @@
+{% extends "question/layout.html" %}
+
+{% block body %}
+<h1>{{ quiz.QuizName }}</h1>
+  
+    
+<div class="form-check">
+    <form action="{% url 'qcheck' question.id %}" method="POST"> 
+      {% csrf_token %}
+      <h3>{{ question.question }}</h3>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}1" value="option1">
+          <label class="form-check-label" for="{{ question.id }}1">
+            {{ question.q1 }}
+          </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}2" value="option2">
+        <label class="form-check-label" for="{{ question.id }}2">
+          {{ question.q2 }}
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}3" value="option3">
+        <label class="form-check-label" for="{{ question.id }}3">
+          {{ question.q3 }}
+        </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="question" id="{{ question.id }}4" value="option4">
+      <label class="form-check-label" for="{{ question.id }}4">
+        {{ question.q4 }}
+      </label>
+    </div>
+    <input type="submit"> 
+    </form>  
+</div>
+  
+
+
+{% endblock %}

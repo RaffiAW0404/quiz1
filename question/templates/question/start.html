@@ -1,0 +1,13 @@
+{% extends "question/layout.html" %}
+
+{% block body %}
+<h1>{{ quiz.QuizName }}</h1>
+
+<!-- <form action="{% url 'qcheck' question1 %}" method="POST">
+    {% csrf_token %} 
+    <input id="question" type="submit" value="Start Quiz">
+</form> -->
+
+<a href="{% url 'qcheck' question1 %}">Start quiz</a>
+
+{% endblock %}
