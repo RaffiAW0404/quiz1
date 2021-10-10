@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.contrib.auth import authenticate, login, logout
 
 from .models import *
 
@@ -100,10 +101,23 @@ def qcheck(request, question_id):
         
         if count == (num):
             quiz = Quiz.objects.get(QuizId=curId)
-            return render(request, "question/end.html",{
-                "points":points,
-                "quiz":quiz
-            })
+
+            entry = Scores(quiz=quiz, user=request.user, score=points)
+            entry.save()
+            lead = Scores.objects.filter(quiz=quiz, user=request.user).order_by("-score")[0]
+            print(lead)
+
+
+            # if lead.score is not None:
+            #     lead.score = points
+            #     print(lead.score)
+            #     print(points)
+            # elif points >= lead.score:
+            #     lead.score = points
+            # return render(request, "question/end.html",{
+            #     "points":points,
+            #     "quiz":quiz
+            # })
         else:
             nextQuestion = Question.objects.get(id=qs[count])
             count+=1
@@ -123,13 +137,41 @@ def start(request, quiz_id):
     points = 0
     curId = quiz_id
     quiz = Quiz.objects.get(QuizId=quiz_id)
-    num = quiz.numq
     questions = quiz.questions.all()
     print(questions)
     for question in questions:
         qs.append(question.id)
     print(qs)
+    num = len(qs)
     return render(request, "question/start.html", {
         "quiz": quiz,
         "question1": qs[0]
+    })
+
+def index(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+    else:
+        return render(request, "question/index.html")
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            #return HttpResponseRedirect(reverse("home"))
+            return render(request, "question/index.html")
+        else:
+            return render(request, "users/login.html", {
+                "message": "Invalid credentials"
+            })
+
+    return render(request, "users/login.html")
+
+def logout_view(request):
+    logout(request)
+    return render(request, "users/login.html", {
+        "message": "Logged Out"
     })

@@ -1,11 +1,13 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
+class User(AbstractUser):
+    pass
 
 class Quiz(models.Model):
     QuizId = models.IntegerField()
     QuizName = models.CharField(max_length=50)
-    numq = models.IntegerField()
 
     def __str__(self):
         return f"{self.QuizId}({self.QuizName})"
@@ -22,6 +24,12 @@ class Question(models.Model):
 
     def __str__(self):
         return f"{self.id}"
+
+class Scores(models.Model):
+         
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="quiz")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="users")
+    score = models.IntegerField()
 
 
 
