@@ -10,5 +10,11 @@ urlpatterns = [
     path("ques<int:question_id>/check",views.qcheck, name="qcheck"),
     path("start<int:quiz_id>",views.start, name="start"),
     path("login", views.login_view,name="login"),
-    path("logout", views.logout_view,name="logout")
+    path("logout", views.logout_view,name="logout"),
+    path("signUp", views.signUp,name="signUp"),
+    path("welcome",views.welcome_view,name="welcome"),
+    path("change",views.change,name="change"),
+    path("profile",views.profile,name="profile"),
+    path("lead<int:quiz_id>",views.lead,name="lead"),
+    path("ledas",views.leads,name="leads")
 ]

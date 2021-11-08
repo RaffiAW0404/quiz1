@@ -1,0 +1,16 @@
+{% extends 'question/layout.html' %}
+
+{% block body %}
+<h1>{{ quiz.QuizName }}</h1>
+
+
+
+<ol>
+    {% for each in lead %} 
+        <li>{{ each.user }} {{ each.score }}</li>
+    {% endfor %}
+</ol>
+
+
+
+{% endblock %}
