@@ -8,6 +8,10 @@
     <form action="{% url 'qcheck' question.id %}" method="POST"> 
       {% csrf_token %}
       <h3>{{ question.question }}</h3>
+      {% if photo %} 
+        {% load static %}
+        <img class="d-block w-100 img-fluid" src="{{ photo }}" alt="{{question.question }}">
+      {% endif %}
       <div class="form-check">
         <input class="form-check-input" type="radio" name="question" id="{{ question.id }}1" value="option1">
           <label class="form-check-label" for="{{ question.id }}1">
@@ -25,13 +29,19 @@
         <label class="form-check-label" for="{{ question.id }}3">
           {{ question.q3 }}
         </label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name="question" id="{{ question.id }}4" value="option4">
-      <label class="form-check-label" for="{{ question.id }}4">
-        {{ question.q4 }}
-      </label>
-    </div>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}4" value="option4">
+        <label class="form-check-label" for="{{ question.id }}4">
+          {{ question.q4 }}
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}5" value="option5">
+        <label class="form-check-label" for="{{ question.id }}5">
+          {{ question.q5 }}
+        </label>
+      </div>
     <input type="submit">
     </form>  
 </div>
