@@ -5,10 +5,11 @@
 
 <h2>{{ message }}<h2>
 
-{% for ques in quesWrong %}
-    <h3>{{ ques.question }}</h3>
-    <p>The correct answer was {{ques.a}}</p>
+<ul>
+{% for i in range(len(quesWrong)) %}
+    <li>{{ quesWrongQues[i] }}</li>
+    <li>The correct answer was {{quesWrongAns[i]}}</li>
 {% endfor %}
-
-
+</ul>
+ 
 {% endblock %}
