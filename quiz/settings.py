@@ -133,3 +133,5 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 MEDIA_ROUTE = ""
 MEDIA_URL= ""
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"

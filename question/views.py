@@ -75,19 +75,23 @@ def ques(request, question_id):
 
 #function to check submitted question
 def qcheck(request, question_id):
-    global points
-    global qs
-    global num
-    global count
-    global curId
-    global curQuizCorrect
+    print(request.session)
+    # global points
+    # global qs
+    # global num
+    # global count
+    # global curId
+    # global curQuizCorrect
 
-    print(num)
-    print(qs[0])
+
+    print(request.session["qs"][0])
     print(question_id)
-    if count == 0:                                      #qcheck is first called by startQuiz button 
-        firstQuestion = Question.objects.get(id=qs[0])  #this if statement ensures that on the 1st time
-        count += 1                                      #it is called it renders the first question instead
+    
+    num = len(request.session["qs"])
+    
+    if request.session["count"] == 0:                                      #qcheck is first called by startQuiz button 
+        firstQuestion = Question.objects.get(id=request.session["qs"][0])  #this if statement ensures that on the 1st time
+        request.session["count"] += 1                                      #it is called it renders the first question instead
         try:
             photo = firstQuestion.diagram.url
             print(photo)
@@ -103,12 +107,15 @@ def qcheck(request, question_id):
         question = Question.objects.get(id=question_id)
         ans = "option"+question.a                       #checkboxes are posted with option at the beginning 
         if request.POST["question"] == ans:
-            points+=1
+            request.session["points"]+=1
         else:
-            curQuizCorrect.append(question)          #adds points if answer correct
+            request.session["curQuizIDs"].append(question.id)          #adds points if answer correct
+            request.session["curQuizQues"].append(question.question)
+            a=question.a
+            request.session["curQuizAns"].append(eval(f"question.q{a}"))
         
-        if count == (num):                          #num is the length of the quiz so if reached need to break out
-            quiz = Quiz.objects.get(QuizId=curId)
+        if request.session["count"] == (num):                          #num is the length of the quiz so if reached need to break out
+            quiz = Quiz.objects.get(QuizId=request.session["curId"])
             try:
                 lead = Scores.objects.filter(quiz=quiz, user=request.user).order_by("-score")[0]
                 print(lead)
@@ -117,33 +124,34 @@ def qcheck(request, question_id):
                 leadScore = 0                           #so we make an exception
 
 
-            entry = Scores(quiz=quiz, user=request.user, score=points)
+            entry = Scores(quiz=quiz, user=request.user, score=request.session["points"])
             entry.save()                                #save current attempt
-
-            print(curQuizCorrect)
-
 
             
             #display a message based off how the user performed in relation to their highscore
-            if points == leadScore:
+            if request.session["points"] == leadScore:
                 if len(Scores.objects.filter(quiz=quiz, user=request.user)) > 1:
                     message = "Congratulations you have equalled your highscore of "+str(leadScore)+" points!"
                 else:
-                    message = "Congratulations you have a set a highscore of "+str(points)+" points!"
-            elif points > leadScore:
-                message = "Congratulations you have beaten your highscore of "+str(leadScore)+" points with an awesome score of "+str(points)+" !"
+                    message = "Congratulations you have a set a highscore of "+str(request.session["points"])+" points!"
+            elif request.session["points"] > leadScore:
+                message = "Congratulations you have beaten your highscore of "+str(leadScore)+" points with an awesome score of "+str(request.session["points"])+" !"
             else:
-                message = "Unlucky you didnt quite reach your highscore of "+str(leadScore)+" points with your score of "+str(points)+". Better luck next time!"
+                message = "Unlucky you didnt quite reach your highscore of "+str(leadScore)+" points with your score of "+str(request.session["points"])+". Better luck next time!"
+                        
             return render(request, "question/end.html", {
                 "message": message,
                 "quiz": quiz,
-                #"quesWrong": curQuizCorrect
+                "quesWrong": request.session["curQuizIDs"],
+                "quesWrongQues": request.session["curQuizQues"],
+                "quesWrongAns": request.session["curQuizAns"]
             })
 
         else:
             #render next quesion in quiz
-            nextQuestion = Question.objects.get(id=qs[count])
-            count+=1
+            nextQuestion = Question.objects.get(id=int(request.session["qs"][request.session["count"]]))
+            print(nextQuestion)
+            request.session["count"]+=1
             return render(request, "question/ques.html" , {
                 "question": nextQuestion 
             })
@@ -151,29 +159,31 @@ def qcheck(request, question_id):
 #function called when link to quiz pressed
 #loads up quiz
 def start(request, quiz_id):
-    global num
-    global qs
-    global count
-    global curId
-    global points
-    global curQuizCorrect
+    # global num
+    # global qs
+    # global count
+    # global curId
+    # global points
+    # global curQuizCorrect
 
     #set up variables and arrays required for attempt at quiz
-    qs=[]
-    curQuizCorrect=[]
+    request.session["qs"] = []
+    request.session["curQuizIDs"]=[]
+    request.session["curQuizQues"]=[]
+    request.session["curQuizAns"]=[]
 
-    count = 0
-    points = 0
-    curId = quiz_id
+    request.session["count"] = 0
+    request.session["points"] = 0
+    request.session["curId"] = quiz_id
 
     quiz = Quiz.objects.get(QuizId=quiz_id)
     questions = quiz.questions.all()
     for question in questions:
-        qs.append(question.id)                          
-    num = len(qs)                               #creates list of all question ids and length
+        request.session["qs"].append(question.id)                          
+    num = len(request.session["qs"])                               #creates list of all question ids and length
     return render(request, "question/start.html", {  #render start page of quiz
         "quiz": quiz,
-        "question1": qs[0]
+        "question1": request.session["qs"][0]
     })
 
 def index(request):
