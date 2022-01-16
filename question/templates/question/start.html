@@ -9,5 +9,7 @@
 </form> -->
 
 <a href="{% url 'qcheck' question1 %}">Start quiz</a>
+{% load static %} 
+<img class="d-block w-100 img-fluid" src="{% static 'question/ukmt.jpg' %}" alt="UKMT">
 
 {% endblock %}

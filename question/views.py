@@ -21,52 +21,52 @@ def cc1(request):
     return render(request, "question/cc1.html")
 
 #old function 
-def qz(request, quiz_id):
-    quiz = Quiz.objects.get(QuizId=quiz_id)
-    return render(request, "question/qz.html", {
-        "quiz": quiz,
-        "questions": quiz.questions.all(),
-        "non_questions": Question.objects.exclude(quiz=quiz).all()
-    })
+# def qz(request, quiz_id):
+#     quiz = Quiz.objects.get(QuizId=quiz_id)
+#     return render(request, "question/qz.html", {
+#         "quiz": quiz,
+#         "questions": quiz.questions.all(),
+#         "non_questions": Question.objects.exclude(quiz=quiz).all()
+#     })
 
 
 #old function
-def check(request, quiz_id):
-    if request.method == "POST":
-        print(quiz_id)
-        quiz = Quiz.objects.get(QuizId=quiz_id)
-        questions = quiz.questions.all()
-        answers=[]
-        num = 0
-        for i in questions:
-           answers.append(i.a)
-           num += 1
+# def check(request, quiz_id):
+#     if request.method == "POST":
+#         print(quiz_id)
+#         quiz = Quiz.objects.get(QuizId=quiz_id)
+#         questions = quiz.questions.all()
+#         answers=[]
+#         num = 0
+#         for i in questions:
+#            answers.append(i.a)
+#            num += 1
 
-        for j in range(num):
-            print(j)
-            print(answers)
-            answer = "option"+answers[int(j)]
-            print(answer)
-            print(request.POST["question"])
-            if request.POST["question"] == answer:
-                print("correct")
-            else:
-                print("incorrect")
+#         for j in range(num):
+#             print(j)
+#             print(answers)
+#             answer = "option"+answers[int(j)]
+#             print(answer)
+#             print(request.POST["question"])
+#             if request.POST["question"] == answer:
+#                 print("correct")
+#             else:
+#                 print("incorrect")
 
-        # print(answers)
-        # answer = "option"+answers[0]
-        # print(answer)
-        # #for j in answers:
+#         # print(answers)
+#         # answer = "option"+answers[0]
+#         # print(answer)
+#         # #for j in answers:
             
-        #    # print(j)
-        # print(request.POST["question"])
-        # if request.POST["question"] == answer:
-        #     print("correct")
-        # else:
-        #     print("incorrect")
-        # option = Question.objects.get(id=int(request.POST["question"]))
+#         #    # print(j)
+#         # print(request.POST["question"])
+#         # if request.POST["question"] == answer:
+#         #     print("correct")
+#         # else:
+#         #     print("incorrect")
+#         # option = Question.objects.get(id=int(request.POST["question"]))
 
-#unneccessary function
+#function to render each question
 def ques(request, question_id):
     question = Question.objects.get(id=question_id)
     return render(request, "question/ques.html", {
@@ -80,47 +80,51 @@ def qcheck(request, question_id):
     global num
     global count
     global curId
+    global curQuizCorrect
 
     print(num)
     print(qs[0])
     print(question_id)
     if count == 0:                                      #qcheck is first called by startQuiz button 
-        print("YEs")
-        firstQuestion = Question.objects.get(id=qs[0])
-        count += 1
-        return render(request, "question/ques.html", {
-            "question": firstQuestion
-        })
-    else:
+        firstQuestion = Question.objects.get(id=qs[0])  #this if statement ensures that on the 1st time
+        count += 1                                      #it is called it renders the first question instead
+        try:
+            photo = firstQuestion.diagram.url
+            print(photo)
+            return render(request, "question/ques.html", {  #of trying to mark it
+                "question": firstQuestion,
+                "photo": photo
+            })
+        except ValueError:
+            return render(request, "question/ques.html", {  #of trying to mark it
+                "question": firstQuestion
+            })
+    else:                                               
         question = Question.objects.get(id=question_id)
-        ans = "option"+question.a
-        print(ans)
+        ans = "option"+question.a                       #checkboxes are posted with option at the beginning 
         if request.POST["question"] == ans:
-            print("correct")
             points+=1
-            curQuizCorrect.append(question_id)
         else:
-            print("incorrect")
-        print(points)
+            curQuizCorrect.append(question)          #adds points if answer correct
         
-        
-        if count == (num):
+        if count == (num):                          #num is the length of the quiz so if reached need to break out
             quiz = Quiz.objects.get(QuizId=curId)
-
             try:
                 lead = Scores.objects.filter(quiz=quiz, user=request.user).order_by("-score")[0]
                 print(lead)
                 leadScore = lead.score
-            except IndexError:
-                leadScore = 0
+            except IndexError:                          #if this is the first attempt there is no data matching query
+                leadScore = 0                           #so we make an exception
 
 
             entry = Scores(quiz=quiz, user=request.user, score=points)
-            entry.save()
+            entry.save()                                #save current attempt
 
             print(curQuizCorrect)
+
+
             
-            
+            #display a message based off how the user performed in relation to their highscore
             if points == leadScore:
                 if len(Scores.objects.filter(quiz=quiz, user=request.user)) > 1:
                     message = "Congratulations you have equalled your highscore of "+str(leadScore)+" points!"
@@ -132,16 +136,20 @@ def qcheck(request, question_id):
                 message = "Unlucky you didnt quite reach your highscore of "+str(leadScore)+" points with your score of "+str(points)+". Better luck next time!"
             return render(request, "question/end.html", {
                 "message": message,
-                "quiz": quiz
+                "quiz": quiz,
+                #"quesWrong": curQuizCorrect
             })
 
         else:
+            #render next quesion in quiz
             nextQuestion = Question.objects.get(id=qs[count])
             count+=1
             return render(request, "question/ques.html" , {
                 "question": nextQuestion 
             })
 
+#function called when link to quiz pressed
+#loads up quiz
 def start(request, quiz_id):
     global num
     global qs
@@ -150,27 +158,27 @@ def start(request, quiz_id):
     global points
     global curQuizCorrect
 
+    #set up variables and arrays required for attempt at quiz
     qs=[]
     curQuizCorrect=[]
 
     count = 0
     points = 0
     curId = quiz_id
+
     quiz = Quiz.objects.get(QuizId=quiz_id)
     questions = quiz.questions.all()
-    print(questions)
     for question in questions:
-        qs.append(question.id)
-    print(qs)
-    num = len(qs)
-    return render(request, "question/start.html", {
+        qs.append(question.id)                          
+    num = len(qs)                               #creates list of all question ids and length
+    return render(request, "question/start.html", {  #render start page of quiz
         "quiz": quiz,
         "question1": qs[0]
     })
 
 def index(request):
-    if request.user.is_authenticated:
-        return render(request, "question/index.html")
+    if request.user.is_authenticated:                   #checks if user is logged in and if not
+        return render(request, "question/index.html")   #forces them to do so
     else:
         return HttpResponseRedirect(reverse("welcome"))
 
@@ -178,15 +186,14 @@ def login_view(request):
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=username, password=password) #checks user's credentials
         if user is not None:
             login(request, user)
-            #return HttpResponseRedirect(reverse("home"))
-            return render(request, "question/index.html")
+            return render(request, "question/index.html")   #if correct proceeds them to site
         else:
             return render(request, "users/login.html", {
                 "message": "Invalid credentials"
-            })
+            })                                              #if not makes them re-enter
 
     return render(request, "users/login.html")
 
@@ -201,68 +208,72 @@ def signUp(request):
         #     return render(request, "users/signUp.html",{
         #         "message": "Password must be at least 8 characters long"
         #     })
-        check = User.objects.filter(username=username)
-        print(len(check))
-        if len(check) == 1:
+        #password validation here currently disabled during development(for main site) phase
+        check = User.objects.filter(username=username)  #checks if the username is taken and 
+        if len(check) == 1:                             #if so forces user to choose another
             return render(request, "users/signUp.html",{
                 "message": "Username already taken"
             })
         else:
             user = User(username=username)
             user.set_password(password)
-            user.save()
-            return HttpResponseRedirect(reverse("login"))
+            user.save()                                     #save's new details to databas
+            return HttpResponseRedirect(reverse("login"))   #and redirects them to login page
 
     return render(request, "users/signUp.html")
 
+#function to render welcome page
 def welcome_view(request):
     return render(request,"users/welcome.html")
 
+#function to log user out
 def logout_view(request):
     logout(request)
     return render(request, "users/welcome.html", {
         "message": "Logged Out"
     })
 
+#function to render page to view choice of leaderboards
 def leads(request):
     return render(request, "question/leads.html")
 
+#function to render a leaderboard
 def lead(request, quiz_id):
     q = Quiz.objects.get(QuizId=quiz_id)
-    print(Scores.objects.filter(quiz=q).order_by("-score"))
     people=[]
     best=[]
     flag = True
     i=0
+    #this while loop creates a list of the top 10(or less) scores for that quiz
     while flag == True and i < len(Scores.objects.filter(quiz=q)):
         top = Scores.objects.filter(quiz=q).order_by("-score")[i]
-        print(top)
+        #queries the database for the 'ith' index of all the ojects stored in Scores
+        #for this quiz ordered by highest score in descending order
         person = top.user
-        print(person)
         i+=1
-        if person in people:
+        if person in people:            #checks if the user of this score is already in list
             if i < len(Scores.objects.filter(quiz=q)):
                 top = Scores.objects.filter(quiz=q).order_by("-score")[i]
             else:
                 flag=False
+            #if they are then fetch the next score in the the list if it exists
         else:
             people.append(person)
-            print(people)
             best.append(top)
-            print(best)
-
+            #add user to the list of people in the list adn add score to leaderboard
         if len(best) >= 10:
             flag = False
-    print(best)
+            #if 10 scores list break out of loop
     return render(request, "question/lead.html",{
         "lead": best,
         "quiz": q
     })
 
-
+#function to allow user to change password
 def change(request):
     pass
 
+#function to render profile page
 def profile(request):
     return render(request, "question/profile.html",{
         "user": request.user
