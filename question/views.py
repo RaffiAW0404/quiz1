@@ -30,7 +30,10 @@ def cc2(request):
     })
 
 def cc3(request):
-    return render(request, "question/cc3.html")
+    quizzes=Quiz.objects.filter()
+    return render(request, "question/cc3.html",{
+        "quizzes":quizzes
+    })
 
 #function to render each question
 def ques(request, question_id):

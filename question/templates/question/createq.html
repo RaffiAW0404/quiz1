@@ -4,7 +4,7 @@
 
 <h1>Create question</h1>
 
-<form action="{% url 'createq' %}" method="POST">
+<form action="{% url 'createq' %}" method="POST" autocomplete="off">
     {% csrf_token %} 
     <input type="text" name="question" placeholder="Question" required>
     <input type="text" name="q1" placeholder="Option 1" required>
