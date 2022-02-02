@@ -7,37 +7,39 @@
 <div class="form-check">
     <form action="{% url 'qcheck' question.id %}" method="POST"> 
       {% csrf_token %}
-      <h3>{{ question.question }}</h3>
+      {% if question %} 
+        <h3>{{ question.question }}</h3>
+      {% endif %}
       {% if photo %} 
         {% load static %}
-        <img class="d-block w-100 img-fluid" src="{{ photo }}" alt="{{question.question }}">
+        <img class="d-block w-100 img-fluid" src="{{ photo }}" alt="question">
       {% endif %}
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}1" value="option1">
+        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}1" value="option1" required>
           <label class="form-check-label" for="{{ question.id }}1">
             {{ question.q1 }}
           </label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}2" value="option2">
+        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}2" value="option2" required>
         <label class="form-check-label" for="{{ question.id }}2">
           {{ question.q2 }}
         </label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}3" value="option3">
+        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}3" value="option3" required>
         <label class="form-check-label" for="{{ question.id }}3">
           {{ question.q3 }}
         </label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}4" value="option4">
+        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}4" value="option4" required>
         <label class="form-check-label" for="{{ question.id }}4">
           {{ question.q4 }}
         </label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}5" value="option5">
+        <input class="form-check-input" type="radio" name="question" id="{{ question.id }}5" value="option5" required>
         <label class="form-check-label" for="{{ question.id }}5">
           {{ question.q5 }}
         </label>

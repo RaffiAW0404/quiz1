@@ -7,9 +7,12 @@ from . import views
 urlpatterns = [
     path("",views.index, name="home"),
     path("cc1",views.cc1, name="cc1"),
+    path("cc2",views.cc2,name="cc2"),
+    path("cc3",views.cc3,name="cc3"),
     path("ques<int:question_id>",views.ques, name="ques"),
     path("ques<int:question_id>/check",views.qcheck, name="qcheck"),
     path("start<int:quiz_id>",views.start, name="start"),
+    path("startTopic<topic>",views.startTopic, name="startTopic"),
     path("login", views.login_view,name="login"),
     path("logout", views.logout_view,name="logout"),
     path("signUp", views.signUp,name="signUp"),

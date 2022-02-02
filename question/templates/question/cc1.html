@@ -1,5 +1,6 @@
 {% extends "question/layout.html" %}
 
+
 {% block body %}
 <h1>Choose quiz</h1>
 <div id="carouselExampleIndicators" class="carousel slide container-sm" data-ride="carousel">
@@ -13,21 +14,28 @@
         {% load static %}
         <img class="d-block w-100 img-fluid" src="{% static 'question/ukmt.jpg' %}" alt="UKMT">
         <div class="carousel-caption d-none d-md-block">
-            <a class="nav-link" href="start1005">2015 paper</a>
+            <a class="nav-link" href="start5">2015 paper</a>
+        </div>
+      </div>
+      <div class="carousel-item container-sm">
+        {% load static %}
+        <img class="d-block w-100 img-fluid" src="{% static 'question/ukmt.jpg' %}" alt="UKMT">
+        <div class="carousel-caption d-none d-md-block">
+            <a class="nav-link" href="start6">2021 paper</a>
         </div>
       </div>
       <div class="carousel-item container-sm">
         {% load static %}
         <img class="d-block w-100 img-fluid" src="{% static 'question/img_lights.jpg' %}" alt="Second slide">
         <div class="carousel-caption d-none d-md-block">
-          <a class="nav-link" href="start1002">Quiz 2</a>
+          <a class="nav-link" href="start2">Quiz 2</a>
         </div>
       </div>
       <div class="carousel-item">
         {% load static %}
         <img class="d-block w-100 img-fluid" src="{% static 'question/fries.jpg' %}" alt="Third slide">
         <div class="carousel-caption d-none d-md-block">
-          <a class="nav-link" href="start1003">Quiz 3</a>
+          <a class="nav-link" href="start3">Quiz 3</a>
         </div>
       </div>
     </div>

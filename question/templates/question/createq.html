@@ -6,16 +6,37 @@
 
 <form action="{% url 'createq' %}" method="POST">
     {% csrf_token %} 
-    <input type="text" name="question" placeholder="Question">
-    <input type="text" name="q1" placeholder="Option 1">
-    <input type="text" name="q2" placeholder="Option 2">
-    <input type="text" name="q3" placeholder="Option 3">
-    <input type="text" name="q4" placeholder="Option 4">
-    <input type="text" name="q5" placeholder="Option 5">
-    <input type="text" name="ans" placeholder="Answer">
-    <input type="text" name="topic" placeholder="Topic">
-    <input type="text" name="quiz" placeholder="Quiz ID">
+    <input type="text" name="question" placeholder="Question" required>
+    <input type="text" name="q1" placeholder="Option 1" required>
+    <input type="text" name="q2" placeholder="Option 2" required>
+    <input type="text" name="q3" placeholder="Option 3" required>
+    <input type="text" name="q4" placeholder="Option 4" required>
+    <input type="text" name="q5" placeholder="Option 5" required>
+    <input type="number" name="ans" placeholder="Answer" min="1" max="5" required>
+    <input type="text" name="solution" placeholder="Solution" required>
+    <input type="text" list="topics" name="topic" placeholder="Topic" required>
+    <datalist id="topics">
+        <option value="Number">
+        <option value="Geometry">
+        <option value="3D shapes">
+        <option value="Angles">
+        <option value="Trigonometry">
+        <option value="Primes">
+        <option value="Fractions">
+        <option value="Ratio">
+        <option value="Logic">
+        <option value="Equations">
+        <option value="Combinations/Probability">
+        <option value="Averages/Percentages">
+        <option value="Indices/Surds">
+        <option value="Circles">       
+    </datalist>
+    <input type="text" name="quiz" placeholder="Quiz ID" required>
     <input type="submit" value="submit"> 
 </form>
+
+{{ message }}
+
+<a href="create">Return</a>
 
 {% endblock %}

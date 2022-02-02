@@ -13,6 +13,10 @@ num = 0
 qs = []
 count = 0
 curId = 0
+oRecord = {"Number": 0,"Primes":0,"Geometry":0,"Angles":0,"Trigonometry":0,"3D shapes":0,"Fractions":0,"Ratio":0,"Combinations/Probability":0,"Averages/Percentages":0,"Logic":0,"Equations":0,"Circles":0,"Indices/Surds":0}
+topics = []
+for i in oRecord:
+    topics.append(i)
 
 # Create your views here.
 
@@ -20,58 +24,25 @@ curId = 0
 def cc1(request):
     return render(request, "question/cc1.html")
 
-#old function 
-# def qz(request, quiz_id):
-#     quiz = Quiz.objects.get(QuizId=quiz_id)
-#     return render(request, "question/qz.html", {
-#         "quiz": quiz,
-#         "questions": quiz.questions.all(),
-#         "non_questions": Question.objects.exclude(quiz=quiz).all()
-#     })
+def cc2(request):
+    return render(request, "question/cc2.html",{
+        "topics": topics
+    })
 
-
-#old function
-# def check(request, quiz_id):
-#     if request.method == "POST":
-#         print(quiz_id)
-#         quiz = Quiz.objects.get(QuizId=quiz_id)
-#         questions = quiz.questions.all()
-#         answers=[]
-#         num = 0
-#         for i in questions:
-#            answers.append(i.a)
-#            num += 1
-
-#         for j in range(num):
-#             print(j)
-#             print(answers)
-#             answer = "option"+answers[int(j)]
-#             print(answer)
-#             print(request.POST["question"])
-#             if request.POST["question"] == answer:
-#                 print("correct")
-#             else:
-#                 print("incorrect")
-
-#         # print(answers)
-#         # answer = "option"+answers[0]
-#         # print(answer)
-#         # #for j in answers:
-            
-#         #    # print(j)
-#         # print(request.POST["question"])
-#         # if request.POST["question"] == answer:
-#         #     print("correct")
-#         # else:
-#         #     print("incorrect")
-#         # option = Question.objects.get(id=int(request.POST["question"]))
+def cc3(request):
+    return render(request, "question/cc3.html")
 
 #function to render each question
 def ques(request, question_id):
     question = Question.objects.get(id=question_id)
-    return render(request, "question/ques.html", {
-        "question": question 
+    photo = question.diagram.url
+    print(photo)
+    return render(request, "question/ques.html", {  #of trying to mark it
+        "question": question,
+        "photo": photo
     })
+            
+    
 
 #function to check submitted question
 def qcheck(request, question_id):
@@ -132,14 +103,22 @@ def qcheck(request, question_id):
         else:
             #render next quesion in quiz
             nextQuestion = Question.objects.get(id=int(request.session["qs"][request.session["count"]]))
-            print(nextQuestion)
+            print(nextQuestion.question)
             request.session["count"]+=1
-            return render(request, "question/ques.html" , {
-                "question": nextQuestion 
-            })
+            try:
+                photo = nextQuestion.diagram.url
+                print(photo)
+                return render(request, "question/ques.html", {  #of trying to mark it
+                    "question": nextQuestion,
+                    "photo": photo
+                })
+            except ValueError:
+                return render(request, "question/ques.html", {  #of trying to mark it
+                    "question": nextQuestion
+                })
 
 def end(request):
-    quiz = Quiz.objects.get(QuizId=request.session["curId"])
+    quiz = Quiz.objects.get(id=request.session["curId"])
     # try:
     #     lead = Scores.objects.filter(quiz=quiz, user=request.user).order_by("-score")[0]
     #     print(lead)
@@ -180,22 +159,17 @@ def feedback(request,question_id):
     q = Question.objects.get(id=question_id)
     a = q.a
     ans = eval(f"q.q{a}")
+    sol = q.solutionImg.url
     return render(request,"question/feedback.html",{
         "question": q,
         "answer": ans,
+        "solution": sol
     })
 
 
 #function called when link to quiz pressed
 #loads up quiz
 def start(request, quiz_id):
-    # global num
-    # global qs
-    # global count
-    # global curId
-    # global points
-    # global curQuizCorrect
-
     #set up variables and arrays required for attempt at quiz
     request.session["qs"] = []
     request.session["curQuizIDs"]=[]
@@ -206,14 +180,34 @@ def start(request, quiz_id):
     request.session["points"] = 25
     request.session["curId"] = quiz_id
 
-    quiz = Quiz.objects.get(QuizId=quiz_id)
+    quiz = Quiz.objects.get(id=quiz_id)
     questions = quiz.questions.all()
     for question in questions:
         request.session["qs"].append(question.id)                          
     num = len(request.session["qs"])                               #creates list of all question ids and length
     return render(request, "question/start.html", {  #render start page of quiz
         "quiz": quiz,
-        "question1": request.session["qs"][0]
+        "startQuestion": request.session["qs"][0]
+    })
+
+def startTopic(request, topic):
+    request.session["qs"] = []
+    request.session["curQuizIDs"]=[]
+    request.session["curQuizQues"]=[]
+    request.session["curQuizAns"]=[]
+
+    request.session["count"] = 0
+    request.session["points"] = 25
+    request.session["topic"] = topic
+
+    questions = Question.objects.filter(topic=topic)
+    for question in questions:
+        request.session["qs"].append(question.id)
+    print(request.session["qs"][0])
+    return render(request, "question/startTopic.html",{
+        "startQuestion": request.session["qs"][0],
+        "topic": topic,
+        
     })
 
 def index(request):
@@ -238,6 +232,8 @@ def login_view(request):
     return render(request, "users/login.html")
 
 def signUp(request):
+    global oRecord
+
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
@@ -255,7 +251,6 @@ def signUp(request):
                 "message": "Username already taken"
             })
         else:
-            oRecord = {"number": 0,"primes":0,"geometry":0,"angles":0,"trigonometry":0,"3D shapes":0,"fractions":0,"ratio":0,"combinations/probability":0,"averages/percentages":0,"logic":0,"equations":0,"circles":0,"indices/surds":0}
             user = User(username=username)
             user.set_password(password)
             user.set_tickRecord(oRecord)
@@ -300,7 +295,7 @@ def leads(request):
 
 #function to render a leaderboard
 def lead(request, quiz_id):
-    q = Quiz.objects.get(QuizId=quiz_id)
+    q = Quiz.objects.get(id=quiz_id)
     people=[]
     best=[]
     flag = True
@@ -377,15 +372,41 @@ def createq(request):
         q5 = request.POST["q5"]
         ans = request.POST["ans"]
         topic = request.POST["topic"]
-        quiz = Quiz.objects.get(QuizId=request.POST["quiz"])
+        solution = request.POST["solution"]
+        quiz = Quiz.objects.filter(id=request.POST["quiz"])
+        print(quiz)
 
-        question = Question(question=q,q1=q1,q2=q2,q3=q3,q4=q4,q5=q5,a=ans,topic=topic)
+        
+
+        if int(ans) < 1 or int(ans) > 5:
+            message = "Answer must be either option 1,2,3,4 or 5"
+            return render(request, "question/createq.html",{
+                "message": message
+            })
+        if topic not in topics:
+            message = "Invalid topic"
+            return render(request, "question/createq.html",{
+                "message": message
+            })
+        if not quiz:
+            message = "Please enter a valid quiz id"
+            return render(request, "question/createq.html",{
+                "message": message
+            })
+
+        question = Question(question=q,q1=q1,q2=q2,q3=q3,q4=q4,q5=q5,a=ans,topic=topic,solution=solution)
         question.save()
-        question.quiz.add(quiz)
+        question.quiz.add(quiz[0])
         question.save()
+        message = "Question created succesfully"
+        return render(request, "question/createq.html",{
+                "message": message
+            })
     return render(request, "question/createq.html")
 
 def buildq(request):
     if request.method == "POST":
-        pass
+        name = request.POST["name"]
+        quiz = Quiz(QuizName=name,average=0,totalScore=0,totalAttempts=0)
+        quiz.save()
     return render(request, "question/buildq.html")

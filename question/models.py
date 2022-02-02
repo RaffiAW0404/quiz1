@@ -22,7 +22,6 @@ class User(AbstractUser):
 
 #creates table that stores data for each quiz
 class Quiz(models.Model):
-    QuizId = models.IntegerField()
     QuizName = models.CharField(max_length=50)
     average = models.IntegerField()
     totalScore = models.IntegerField()
@@ -33,7 +32,7 @@ class Question(models.Model):
     quiz = models.ManyToManyField(Quiz, blank=True, related_name="questions")
     #the many to many field here creates a new table to link the question and quiz tables
     #this means that a quiz can contain many questions and a question can belong to many quizzes
-    question = models.CharField(max_length=500)
+    question = models.CharField(blank=True,max_length=500)
     q1= models.CharField(max_length=200)
     q2= models.CharField(max_length=200)
     q3= models.CharField(max_length=200)
@@ -41,7 +40,9 @@ class Question(models.Model):
     q5= models.CharField(max_length=200)
     a = models.CharField(max_length=1)
     diagram = models.ImageField(blank=True,upload_to='photos')
-    topic = models.CharField(max_length=200)
+    solutionImg = models.ImageField(blank=True,upload_to='photos')
+    solution = models.CharField(blank=True,max_length=500)
+    topic = models.CharField(blank=True,max_length=200)
 
 #creates table that stores data for each score(when a user completes a quiz)
 class Scores(models.Model):
