@@ -1,9 +1,23 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import json
 
 # Create your models here.
 class User(AbstractUser):
-    pass
+    ansRecord = models.CharField(max_length=500)
+    tickRecord = models.CharField(max_length=500)
+
+    def set_ansRecord(self,x):
+        self.ansRecord = json.dumps(x)
+    
+    def get_ansRecord(self):
+        return json.loads(self.ansRecord)
+
+    def set_tickRecord(self,x):
+        self.tickRecord = json.dumps(x)
+    
+    def get_tickRecord(self):
+        return json.loads(self.tickRecord)
 #inherits from default django user model to allow me to link self-made models with it
 
 #creates table that stores data for each quiz
@@ -27,6 +41,7 @@ class Question(models.Model):
     q5= models.CharField(max_length=200)
     a = models.CharField(max_length=1)
     diagram = models.ImageField(blank=True,upload_to='photos')
+    topic = models.CharField(max_length=200)
 
 #creates table that stores data for each score(when a user completes a quiz)
 class Scores(models.Model):

@@ -1,0 +1,20 @@
+{% extends "users/layout.html" %} 
+
+{% block body %} 
+
+{% if message %} 
+    <div>{{ message }}</div>
+{% endif %}
+
+<form action="{% url 'change' %}" method="POST">
+    {% csrf_token %} 
+    <input type="text" name="username" placeholder="Username">
+    <input type="password" name="password0" placeholder="Current password">
+    <input type="password" name="password1" placeholder="New password">
+    <input type="password" name="password2" placeholder="Confirm new password">
+    <input type="submit" value="submit"> 
+</form>
+
+<a href="profile">Return</a>
+
+{% endblock %}

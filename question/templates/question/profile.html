@@ -7,4 +7,8 @@
 <a href="{% url 'change' %}">Change password</a>
 <a href = "{% url 'logout' %}">Log Out</a>
 
+{% for topic, score in record.items %}
+    <p>{{ topic }}: {{ score }}</p>
+{% endfor %}
+
 {% endblock %}

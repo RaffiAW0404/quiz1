@@ -17,7 +17,12 @@ urlpatterns = [
     path("change",views.change,name="change"),
     path("profile",views.profile,name="profile"),
     path("lead<int:quiz_id>",views.lead,name="lead"),
-    path("ledas",views.leads,name="leads")
+    path("ledas",views.leads,name="leads"),
+    path("end",views.end,name="end"),
+    path("feedback<int:question_id>",views.feedback,name="feedback"),
+    path("create",views.create,name="create"),
+    path("createq",views.createq,name="createq"),
+    path("buildq",views.buildq,name="buildq")
 ]
 #the use of the variable <int:question_id> in the url means that after the prefix 'ques' 
 #a variable in integer type will be passed into the views.ques function allowing 
